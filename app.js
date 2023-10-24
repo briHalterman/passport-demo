@@ -1,5 +1,7 @@
 // app.js
 
+// Most of this should look familiar to you by now, except for the new imported middleware for express-session and passport. We are not actually going to be using express-session directly, it is a dependency that is used in the background by passport.js.
+
 require('dotenv').config();
 
 const express = require("express");
