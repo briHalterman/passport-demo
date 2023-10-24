@@ -36,4 +36,22 @@ app.use(express.urlencoded({ extended: false }));
 
 app.get("/", (req, res) => res.render("index"));
 
+// create a route for /sign-up that points to sign-up-form
+app.get("/sign-up", (req, res) => res.render("sign-up-form"));
+
+// create an app.post for the sign up form so that we can add users to our database
+app.post("/sign-up", async (req, res, next) => {
+  try {
+    const user = new User({
+      username: req.body.username,
+      password: req.body.password
+    });
+    const result = await user.save();
+    res.redirect("/");
+  } catch(err) {
+    return next(err);
+  };
+});
+
+
 app.listen(3000, () => console.log("app listening on port 3000!"));
