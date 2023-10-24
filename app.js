@@ -1,6 +1,12 @@
 // app.js
 
-// Most of this should look familiar to you by now, except for the new imported middleware for express-session and passport. We are not actually going to be using express-session directly, it is a dependency that is used in the background by passport.js.
+// // Most of this should look familiar to you by now, except for the new imported middleware for express-session and passport. We are not actually going to be using express-session directly, it is a dependency that is used in the background by passport.js.
+
+// PassportJS uses what they call Strategies to authenticate users
+// LocalStrategy (username-and-password): most basic and most common Strategy
+// already installed and required the appropriate modules
+
+// need to add 3 functions to our app.js file, and then add an app.post for our /log-in path
 
 require('dotenv').config();
 
@@ -29,6 +35,31 @@ const app = express();
 app.set("views", __dirname);
 app.set("view engine", "ejs");
 
+// Function one : setting up the LocalStrategy
+// acts a bit like a middleware and will be called for us when we ask passport to do the authentication
+// will be called when we use the passport.authenticate() function
+passport.use(
+  // takes username and password
+  new LocalStrategy(async (username, password, done) => {
+    try {
+      // tries to find the user in DB
+      const user = await User.findOne({ username: username });
+      // makes sure that the user’s password matches the given password
+      if (!user) {
+        return done(null, false, { message: "Incorrect username" });
+      };
+      if (user.password !== password) {
+        return done(null, false, { message: "Incorrect password" });
+      };
+      // authenticates user and moves on
+      return done(null, user);
+    } catch(err) {
+      return done(err);
+    };
+  })
+);
+// We will not be calling this function directly, so you won’t have to supply the done function.
+
 app.use(session({ secret: process.env.SESSION_SECRET, resave: false, saveUninitialized: true }));
 app.use(passport.initialize());
 app.use(passport.session());
@@ -47,6 +78,7 @@ app.post("/sign-up", async (req, res, next) => {
       password: req.body.password
     });
     const result = await user.save();
+    // redirect to the index
     res.redirect("/");
   } catch(err) {
     return next(err);
