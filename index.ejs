@@ -7,6 +7,16 @@
   <title></title>
 </head>
 <body>
-  <h1>hello world!</h1>
+  <!-- <h1>hello world!</h1> -->
+  <!-- add the login form directly to our index template -->
+  <h1>please log in</h1>
+  <!-- action so that form POSTs to /log-in -->
+  <form action="/log-in" method="POST">
+    <label for="username">Username</label>
+    <input name="username" placeholder="username" type="text" />
+    <label for="password">Password</label>
+    <input name="password" type="password" />
+    <button>Log In</button>
+  </form>
 </body>
 </html>
