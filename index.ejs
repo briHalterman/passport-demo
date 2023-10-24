@@ -9,14 +9,22 @@
 <body>
   <!-- <h1>hello world!</h1> -->
   <!-- add the login form directly to our index template -->
-  <h1>please log in</h1>
-  <!-- action so that form POSTs to /log-in -->
-  <form action="/log-in" method="POST">
-    <label for="username">Username</label>
-    <input name="username" placeholder="username" type="text" />
-    <label for="password">Password</label>
-    <input name="password" type="password" />
-    <button>Log In</button>
-  </form>
+  <!-- check to see if there is a user defined -->
+  <% if (user) {%>
+    <!-- offer a welcome message -->
+    <h1>WELCOME BACK <%= user.username %></h1>
+    <a href="/log-out">LOG OUT</a>
+  <% } else { %>
+    <!-- show the login form -->
+    <h1>please log in</h1>
+    <!-- action so that form POSTs to /log-in -->
+    <form action="/log-in" method="POST">
+      <label for="username">Username</label>
+      <input name="username" placeholder="username" type="text" />
+      <label for="password">Password</label>
+      <input name="password" type="password" />
+      <button>Log In</button>
+    </form>
+  <%}%>
 </body>
 </html>
