@@ -83,10 +83,22 @@ app.use(passport.initialize());
 app.use(passport.session());
 app.use(express.urlencoded({ extended: false }));
 
+// In express, you can set and access various local variables throughout your entire app (even in views) with the locals object.
+
+// Middleware functions are simply functions that take the req and res objects, manipulate them, and pass them on through the rest of the app.
+
+app.use((req, res, next) => {
+  res.locals.currentUser = req.user;
+  next();
+});
+// insert this code somewhere between where you instantiate the passport middleware and before you render your views to have access to the currentUser variable in all of your views
+
+
 // edit app.get("/") to send user object to view:
 // app.get("/", (req, res) => res.render("index"));
 app.get("/", (req, res) => {
-  res.render("index", { user: req.user });
+  // res.render("index", { user: req.user });
+  res.render("index");
 });
 
 // create a route for /sign-up that points to sign-up-form

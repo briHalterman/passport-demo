@@ -1,5 +1,7 @@
 <!-- To keep things simple, our view engine is set up to just look in the main directory, and it’s looking for a template called index.ejs -->
 
+<!-- Change index.ejs so that instead of if (user) it has if (currentUser) and instead of user.username, it has currentUser.username. The point is that the variables in res.locals are always available inside of the templates. -->
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -10,9 +12,9 @@
   <!-- <h1>hello world!</h1> -->
   <!-- add the login form directly to our index template -->
   <!-- check to see if there is a user defined -->
-  <% if (user) {%>
+  <% if (currentUser) {%>
     <!-- offer a welcome message -->
-    <h1>WELCOME BACK <%= user.username %></h1>
+    <h1>WELCOME BACK <%= currentUser.username %></h1>
     <a href="/log-out">LOG OUT</a>
   <% } else { %>
     <!-- show the login form -->
