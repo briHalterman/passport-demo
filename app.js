@@ -92,6 +92,16 @@ app.get("/", (req, res) => {
 // create a route for /sign-up that points to sign-up-form
 app.get("/sign-up", (req, res) => res.render("sign-up-form"));
 
+// Conveniently, the passport middleware adds a logout function to the req object:
+app.get("/log-out", (req, res, next) => {
+  req.logout((err) => {
+    if (err) {
+      return next(err);
+    }
+    res.redirect("/");
+  });
+});
+
 // create an app.post for the sign up form so that we can add users to our database
 app.post("/sign-up", async (req, res, next) => {
   try {
@@ -117,6 +127,6 @@ app.post(
 );
 // As you can see, all we have to do is call passport.authenticate(). This middleware performs numerous functions behind the scenes. Among other things, it looks at the request body for parameters named username and password then runs the LocalStrategy function that we defined earlier to see if the username and password are in the database. It then creates a session cookie that gets stored in the user’s browser, and that we can access in all future requests to see whether or not that user is logged in. It can also redirect you to different routes based on whether the login is a success or a failure. If we had a separate login page we might want to go back to that if the login failed, or we might want to take the user to their user dashboard if the login is successful.
 
-// The passport middleware checks to see if there is a user logged in (by checking the cookies that come in with the req object) and if there is, it adds that user to the request object for us.
+// The passport middleware checks to see if there is a user logged in (by checking the cookies that come in with the req object) and if there is, it adds that user to the request object for us. Neat!
 
 app.listen(3000, () => console.log("app listening on port 3000!"));
