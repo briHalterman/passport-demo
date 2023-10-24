@@ -60,6 +60,24 @@ passport.use(
 );
 // We will not be calling this function directly, so you won’t have to supply the done function.
 
+// Functions two and three: sessions and serialization
+// To make sure our user is logged in, and to allow them to stay logged in as they move around our app, passport will use some data to create a cookie which is stored in the user’s browser. 
+// These next two functions define what bit of information passport is looking for when it creates and then decodes the cookie. 
+// Make sure that whatever bit of data it’s looking for actually exists in our Database!
+passport.serializeUser((user, done) => {
+  done(null, user.id);
+});
+
+passport.deserializeUser(async (id, done) => {
+  try {
+    const user = await User.findById(id);
+    done(null, user);
+  } catch(err) {
+    done(err);
+  };
+});
+// we aren’t going to be calling these functions on our own, they’re used in the background by passport
+
 app.use(session({ secret: process.env.SESSION_SECRET, resave: false, saveUninitialized: true }));
 app.use(passport.initialize());
 app.use(passport.session());
