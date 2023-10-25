@@ -126,21 +126,35 @@ app.get("/log-out", (req, res, next) => {
   });
 });
 
+// Storing Hashed Passwords (A Review of Lesson 9):
+
+// Password hashes are the result of passing the user’s password through a one-way hash function, which maps variable sized inputs to fixed size pseudo-random outputs.
+
+// Salting a password means adding extra random characters to it, the password plus the extra random characters are then fed into the hashing function. Salting is used to make a password hash output unique, even for users who use the same password, and to protect against rainbow table and dictionary attacks.
+
+// Usually, the salt gets stored in the database in the clear next to the hashed value, but in our case, there is no need to do so because the hashing algorithm that bcryptjs uses includes the salt automatically with the hash.
+
+// The hash function is somewhat slow, so all of the DB storage code needs to go inside the callback.
+
+// It’s important to note that how hashing works is beyond the scope of this lesson.
+
 // create an app.post for the sign up form so that we can add users to our database
-app.post("/sign-up", async (req, res, next) => {
-  try {
-    // const user = new User({
-    //   username: req.body.username,
-    //   password: req.body.password
-    // });
-    const hashedPassword = await bcrypt.hash(req.body.password, 10);
-    // const result = await user.save();
-    await User.create({ username: req.body.username, password: hashedPassword });
-    // redirect to the index
-    res.redirect("/");
-  } catch(err) {
-    return next(err);
-  };
+app.post("/sign-up", async (req, res, next) => { // second argument is length of “salt” used in hashing function
+  bcrypt.hash(req.body.password, 10, async (err, hashedPassword) => {
+    try {
+      // const user = new User({
+      //   username: req.body.username,
+      //   password: req.body.password
+      // });
+      const hashedPassword = await bcrypt.hash(req.body.password, 10);
+      // const result = await user.save();
+      await User.create({ username: req.body.username, password: hashedPassword });
+      // redirect to the index
+      res.redirect("/");
+    } catch(err) {
+      return next(err);
+    };
+  });
 });
 
 // … and now for the magical part!
