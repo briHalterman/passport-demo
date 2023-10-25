@@ -8,6 +8,10 @@
 
 // need to add 3 functions to our app.js file, and then add an app.post for our /log-in path
 
+// once installed, require bcryptjs
+var bcrypt = require('bcryptjs');
+// put it to use where we save our passwords to the DB, and where we compare them inside the LocalStrategy
+
 require('dotenv').config();
 
 const express = require("express");
@@ -48,17 +52,25 @@ passport.use(
       if (!user) {
         return done(null, false, { message: "Incorrect username" });
       };
-      if (user.password !== password) {
-        return done(null, false, { message: "Incorrect password" });
-      };
-      // authenticates user and moves on
-      return done(null, user);
+      // if (user.password !== password) {
+      //   return done(null, false, { message: "Incorrect password" });
+      // };
+      // // authenticates user and moves on
+      // return done(null, user);
+      bcrypt.compare(password, user.password, (err, result) => {
+        if (result) {
+          return done(null, user);
+        } else {
+          return done(null, false, { message: "Incorrect password" });
+        }
+      });
     } catch(err) {
       return done(err);
     };
   })
 );
-// We will not be calling this function directly, so you won’t have to supply the done function.
+// // We will not be calling this function directly, so you won’t have to supply the done function.
+// This is kind of a crude approach for simplicity. It would be better to extend the schema for User
 
 // Functions two and three: sessions and serialization
 // To make sure our user is logged in, and to allow them to stay logged in as they move around our app, passport will use some data to create a cookie which is stored in the user’s browser. 
@@ -117,11 +129,13 @@ app.get("/log-out", (req, res, next) => {
 // create an app.post for the sign up form so that we can add users to our database
 app.post("/sign-up", async (req, res, next) => {
   try {
-    const user = new User({
-      username: req.body.username,
-      password: req.body.password
-    });
-    const result = await user.save();
+    // const user = new User({
+    //   username: req.body.username,
+    //   password: req.body.password
+    // });
+    const hashedPassword = await bcrypt.hash(req.body.password, 10);
+    // const result = await user.save();
+    await User.create({ username: req.body.username, password: hashedPassword });
     // redirect to the index
     res.redirect("/");
   } catch(err) {
