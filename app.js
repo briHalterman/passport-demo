@@ -42,8 +42,13 @@ app.set("view engine", "ejs");
 // Function one : setting up the LocalStrategy
 // acts a bit like a middleware and will be called for us when we ask passport to do the authentication
 // will be called when we use the passport.authenticate() function
+
+// Comparing hashed passwords:
+// Use the bcrypt.compare() function to validate the password input. The function compares the plain-text password in the request object to the hashed password.
+
 passport.use(
   // takes username and password
+  // replace the user.password !== password expression with the bcrypt.compare() function
   new LocalStrategy(async (username, password, done) => {
     try {
       // tries to find the user in DB
@@ -68,6 +73,7 @@ passport.use(
       return done(err);
     };
   })
+  // Unfortunately, users that were saved BEFORE you added bcrypt will no longer work, but that’s a small price to pay for security!
 );
 // // We will not be calling this function directly, so you won’t have to supply the done function.
 // This is kind of a crude approach for simplicity. It would be better to extend the schema for User
