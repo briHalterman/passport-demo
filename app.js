@@ -111,6 +111,21 @@ app.use((req, res, next) => {
 });
 // insert this code somewhere between where you instantiate the passport middleware and before you render your views to have access to the currentUser variable in all of your views
 
+// use middleware to perform access control
+// so that certain pages are restricted only to those users that log in
+const authMiddleware = (req, res, next) => {
+  // if the user attempts to access a restricted page without being logged in...
+  if (!req.user) {
+    if (!req.session.messages) {
+      req.session.messages = [];
+    }
+    // ...redirect user to logon page with message
+    req.session.messages.push("You can't access that page before logon.");
+    res.redirect('/');
+  } else {
+    next();
+  }
+}
 
 // edit app.get("/") to send user object to view:
 // app.get("/", (req, res) => res.render("index"));
