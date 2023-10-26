@@ -123,11 +123,18 @@ app.get("/", (req, res) => {
 app.get("/sign-up", (req, res) => res.render("sign-up-form"));
 
 // Conveniently, the passport middleware adds a logout function to the req object:
-app.get("/log-out", (req, res, next) => {
-  req.logout((err) => {
-    if (err) {
-      return next(err);
-    }
+// app.get("/log-out", (req, res, next) => {
+//   req.logout((err) => {
+//     if (err) {
+//       return next(err);
+//     }
+//     res.redirect("/");
+//   });
+// });
+// // The code now does a req.logout() when the user logs off.
+// It is better to delete all the session information at logoff time:
+app.get("/log-out", (req, res) => {
+  req.session.destroy(function (err) {
     res.redirect("/");
   });
 });
