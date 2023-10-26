@@ -161,6 +161,17 @@ app.get("/log-out", (req, res) => {
   });
 });
 
+// create route statement that loads restricted page
+app.get('/restricted', authMiddleware, (req, res) => {
+  if (!req.session.pageCount) {
+    req.session.pageCount = 1;
+  } else {
+    req.session.pageCount++;
+  }
+  res.render('restricted', { pageCount: req.session.pageCount });
+})
+// Here the code shows also how the session can be used to store state, in this case the number of page visits.
+
 // Storing Hashed Passwords (A Review of Lesson 9):
 
 // Password hashes are the result of passing the user’s password through a one-way hash function, which maps variable sized inputs to fixed size pseudo-random outputs.
