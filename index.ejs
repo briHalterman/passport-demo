@@ -19,6 +19,10 @@
   <% } else { %>
     <!-- show the login form -->
     <h1>please log in</h1>
+    <!-- creating error message -->
+    <% messages.forEach((msg) =>{ %>
+      <p><%= msg %></p>
+    <% }) %>
     <!-- action so that form POSTs to /log-in -->
     <form action="/log-in" method="POST">
       <label for="username">Username</label>

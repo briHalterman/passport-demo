@@ -115,8 +115,15 @@ app.use((req, res, next) => {
 // edit app.get("/") to send user object to view:
 // app.get("/", (req, res) => res.render("index"));
 app.get("/", (req, res) => {
+  // to create password error message:
+  let messages = [];
+  if (req.session.messages) {
+    messages = req.session.messages;
+    req.session.messages = [];
+  }
   // res.render("index", { user: req.user });
-  res.render("index");
+  // res.render("index");
+  res.render("index", { messages });
 });
 
 // create a route for /sign-up that points to sign-up-form
@@ -175,7 +182,9 @@ app.post(
   "/log-in",
   passport.authenticate("local", {
     successRedirect: "/",
-    failureRedirect: "/"
+    failureRedirect: "/",
+    failureMessage: true // creating incorrect password message
+    // This is the way Passport error messages into the session, so that they can be displayed on subsequent screens. The messages are put in an array, req.session.messages. This can then be displayed in the index.ejs.
   })
 );
 // As you can see, all we have to do is call passport.authenticate(). This middleware performs numerous functions behind the scenes. Among other things, it looks at the request body for parameters named username and password then runs the LocalStrategy function that we defined earlier to see if the username and password are in the database. It then creates a session cookie that gets stored in the user’s browser, and that we can access in all future requests to see whether or not that user is logged in. It can also redirect you to different routes based on whether the login is a success or a failure. If we had a separate login page we might want to go back to that if the login failed, or we might want to take the user to their user dashboard if the login is successful.
