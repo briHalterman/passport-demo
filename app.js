@@ -22,6 +22,22 @@ const LocalStrategy = require("passport-local").Strategy;
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
+// A Production Grade Session Store
+// The default for express-session is to store session data in memory. This approach should never be used in production, because (a) if the application is restarted, all session data is lost, and (b) session data could fill up memory. 
+// A production application stores session data another way, and there are a variety of choices. (Here we use MongoDB.)
+
+const MongoDBStore = require('connect-mongodb-session')(session)
+
+var store = new MongoDBStore({
+  uri: process.env.MONGO_URI,
+  collection: 'sessions'
+});
+
+// Catch errors
+store.on('error', function (error) {
+  console.log(error);
+});
+
 const mongoDb = process.env.MONGO_URI;
 mongoose.connect(mongoDb);
 const db = mongoose.connection;
@@ -96,7 +112,11 @@ passport.deserializeUser(async (id, done) => {
 });
 // we aren’t going to be calling these functions on our own, they’re used in the background by passport
 
-app.use(session({ secret: process.env.SESSION_SECRET, resave: false, saveUninitialized: true }));
+// app.use(session({ secret: process.env.SESSION_SECRET, resave: false, saveUninitialized: true }));
+app.use(session({
+  secret: process.env.SESSION_SECRET, resave: false, saveUninitialized: true,
+  store: store
+}));
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(express.urlencoded({ extended: false }));
