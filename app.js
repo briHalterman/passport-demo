@@ -1,5 +1,7 @@
 // app.js
 
+// hello git troubleshooting ;-)
+
 // // Most of this should look familiar to you by now, except for the new imported middleware for express-session and passport. We are not actually going to be using express-session directly, it is a dependency that is used in the background by passport.js.
 
 // PassportJS uses what they call Strategies to authenticate users
